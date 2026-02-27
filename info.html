@@ -4,193 +4,161 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI Insight Documentation - El Arte del RAG</title>
-    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;700&display=swap" rel="stylesheet">
+    <title>Industrial IoT Solutions | OPC-UA Standard</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Goldman:wght@400;700&family=Inter:wght@300;400;800&display=swap"
+        rel="stylesheet">
     <style>
         :root {
-            --bg-deep: #050505;
-            --accent-primary: #8b5cf6;
-            --accent-secondary: #06b6d4;
-            --text-glow: rgba(139, 92, 246, 0.5);
-            --card-glass: rgba(255, 255, 255, 0.05);
+            --primary: #58a6ff;
+            --accent: #d29922;
+            --bg: #0d1117;
+            --glass: rgba(22, 27, 34, 0.8);
+            --border: #30363d;
         }
 
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Space Grotesk', sans-serif;
         }
 
         body {
-            background: var(--bg-deep);
-            color: #fff;
-            line-height: 1.6;
-            overflow-x: hidden;
+            background-color: var(--bg);
+            color: #c9d1d9;
+            font-family: 'Inter', sans-serif;
+            background-image: linear-gradient(rgba(13, 17, 23, 0.9), rgba(13, 17, 23, 0.9)), url('https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?auto=format&fit=crop&q=80&w=2070');
+            background-size: cover;
+            background-attachment: fixed;
         }
 
-        .gradient-bg {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background:
-                radial-gradient(circle at 20% 30%, rgba(139, 92, 246, 0.1) 0%, transparent 50%),
-                radial-gradient(circle at 80% 70%, rgba(6, 118, 212, 0.1) 0%, transparent 50%);
-            z-index: -1;
-        }
-
-        nav {
-            padding: 2rem;
+        header {
+            height: 100vh;
             display: flex;
-            justify-content: space-between;
+            flex-direction: column;
+            justify-content: center;
             align-items: center;
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-
-        .logo {
-            font-size: 1.5rem;
-            font-weight: 700;
-            letter-spacing: -1px;
-            background: linear-gradient(to right, var(--accent-primary), var(--accent-secondary));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
-        section {
-            max-width: 1000px;
-            margin: 4rem auto;
             padding: 2rem;
+            text-align: center;
         }
 
-        .hero {
-            text-align: center;
-            margin-bottom: 6rem;
+        .cyber-badge {
+            font-family: 'Goldman', cursive;
+            color: var(--accent);
+            border: 1px solid var(--accent);
+            padding: 0.5rem 2rem;
+            text-transform: uppercase;
+            letter-spacing: 5px;
+            margin-bottom: 2rem;
+            box-shadow: 0 0 20px rgba(210, 153, 34, 0.2);
         }
 
         h1 {
-            font-size: 4rem;
+            font-size: 5rem;
+            font-weight: 800;
+            line-height: 1;
             margin-bottom: 1.5rem;
-            letter-spacing: -2px;
+            color: #f0f6fc;
+            text-transform: uppercase;
         }
 
-        .badge {
-            display: inline-block;
-            padding: 0.5rem 1.5rem;
-            border-radius: 2rem;
-            background: var(--card-glass);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            font-size: 0.9rem;
-            color: var(--accent-secondary);
-            margin-bottom: 2rem;
+        .highlight {
+            color: var(--primary);
         }
 
-        .grid {
+        .description {
+            font-size: 1.25rem;
+            max-width: 800px;
+            color: #8b949e;
+            margin-bottom: 3rem;
+            line-height: 1.8;
+        }
+
+        .features {
+            max-width: 1200px;
+            margin: 0 auto;
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
             gap: 2rem;
+            padding: 5rem 2rem;
         }
 
         .card {
-            background: var(--card-glass);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            padding: 2.5rem;
-            border-radius: 2rem;
-            transition: transform 0.3s ease;
+            background: var(--glass);
+            border: 1px solid var(--border);
+            padding: 3rem;
+            border-radius: 4px;
+            backdrop-filter: blur(10px);
+            transition: 0.3s;
         }
 
         .card:hover {
-            transform: translateY(-10px);
-            border-color: var(--accent-primary);
+            border-color: var(--primary);
+            transform: translateY(-5px);
         }
 
         .card h3 {
-            color: var(--accent-primary);
+            color: #f0f6fc;
             margin-bottom: 1rem;
-            font-size: 1.5rem;
+            font-family: 'Goldman';
         }
 
-        .architecture-flow {
-            margin-top: 4rem;
-            padding: 3rem;
-            border-radius: 3rem;
-            background: rgba(139, 92, 246, 0.03);
-            border: 1px dashed rgba(139, 92, 246, 0.2);
-            text-align: center;
+        .btn {
+            background: transparent;
+            color: var(--primary);
+            border: 1px solid var(--primary);
+            padding: 1rem 3rem;
+            text-decoration: none;
+            font-weight: 700;
+            text-transform: uppercase;
+            transition: 0.3s;
+        }
+
+        .btn:hover {
+            background: var(--primary);
+            color: #fff;
+            box-shadow: 0 0 30px rgba(88, 166, 255, 0.4);
         }
 
         footer {
             text-align: center;
             padding: 4rem;
-            color: #555;
-            font-size: 0.9rem;
-        }
-
-        .cta-button {
-            display: inline-block;
-            margin-top: 2rem;
-            padding: 1rem 3rem;
-            background: var(--accent-primary);
-            color: white;
-            text-decoration: none;
-            border-radius: 1rem;
-            font-weight: 700;
-            transition: filter 0.3s;
-        }
-
-        .cta-button:hover {
-            filter: brightness(1.2);
-            box-shadow: 0 0 30px var(--text-glow);
+            border-top: 1px solid var(--border);
         }
     </style>
 </head>
 
 <body>
-    <div class="gradient-bg"></div>
-
-    <nav>
-        <div class="logo">AI INSIGHT</div>
-        <div style="font-size: 0.8rem; opacity: 0.5;">ENGINEERING DOCS</div>
-    </nav>
-
-    <section class="hero">
-        <span class="badge">SISTEMA RAG NIVEL SENIOR</span>
-        <h1>El Futuro de la Información Empresarial</h1>
-        <p style="font-size: 1.3rem; opacity: 0.7; max-width: 700px; margin: 0 auto;">Explora la arquitectura detrás del
-            sistema RAG modular que redefine la manera en que los LLMs interactúan con el conocimiento privado.</p>
-        <a href="https://github.com/salvvettixx/SistemaRAG" class="cta-button">Ver Código en GitHub</a>
-    </section>
-
-    <section>
-        <div class="grid">
-            <div class="card">
-                <h3>Recuperación Híbrida</h3>
-                <p>Implementamos búsqueda semántica profunda combinada con algoritmos BM25 de alta precisión. Esto
-                    asegura que no falte ni el contexto abstracto ni el dato exacto.</p>
-            </div>
-            <div class="card">
-                <h3>Re-ranking Dinámico</h3>
-                <p>Utilizamos modelos locales FlashRank (Cross-Encoders) para evaluar la relevancia entre la pregunta y
-                    los documentos, reduciendo el ruido informático en un 95%.</p>
-            </div>
-            <div class="card">
-                <h3>Multi-Query Engine</h3>
-                <p>Nuestra IA no solo lee tu pregunta; la expande y la replantea desde múltiples ángulos para garantizar
-                    que el retrieval atrape la pieza de información perfecta.</p>
-            </div>
+    <header>
+        <div class="cyber-badge">Protocol IEC 62541</div>
+        <h1>OPC-UA <span class="highlight">Intelligence</span></h1>
+        <p class="description">Solución avanzada de monitorización industrial y comunicaciones M2M. Convergencia OT/IT
+            con seguridad criptográfica y baja latencia operativa.</p>
+        <div style="display:flex; gap: 1rem;">
+            <a href="https://github.com/salvvettixx/Industrial-IoT-OPCUA" class="btn">Cloud Repository</a>
         </div>
-    </section>
+    </header>
 
-    <section class="architecture-flow">
-        <h2 style="margin-bottom: 2rem;">Pipeline de Datos</h2>
-        <p>Documentos → Fragmentación Recursiva → ChromaDB → Ensemble Retrieval → Re-Ranker → Prompt Modular → Respuesta
-            Final</p>
-    </section>
+    <div class="features">
+        <div class="card">
+            <h3>Digital Twin Engine</h3>
+            <p>Simulación de activos de planta en tiempo real, permitiendo la interacción remota con dispositivos
+                físicos mediante modelos virtuales.</p>
+        </div>
+        <div class="card">
+            <h3>Edge Connectivity</h3>
+            <p>Conexión directa entre el campo y la nube mediante el estándar global de interoperabilidad industrial.
+            </p>
+        </div>
+        <div class="card">
+            <h3>Security Policy</h3>
+            <p>Autenticación X.509 y cifrado de canal AES-256 para proteger la infraestructura crítica contra accesos no
+                autorizados.</p>
+        </div>
+    </div>
 
     <footer>
-        &copy; 2026 AI Insight System. Creado para el desafío técnico de Ingeniería de IA.
+        &copy; 2026 Industrial IoT Solutions by Salvvettixx.
     </footer>
 </body>
 

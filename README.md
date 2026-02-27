@@ -1,66 +1,51 @@
-# AI Insight - Sistema RAG de Última Generación 🚀
+# 🏭 Industrial IoT & Digital Twin - OPC-UA Professional Suite
 
+![Industry 4.0](https://img.shields.io/badge/Industry-4.0-blue?style=for-the-badge)
+![OPC-UA](https://img.shields.io/badge/OPC--UA-IEC_62541-orange?style=for-the-badge)
 ![Python](https://img.shields.io/badge/Python-3.9+-3776AB?style=for-the-badge&logo=python&logoColor=white)
-![LangChain](https://img.shields.io/badge/LangChain-Pro-00ADFF?style=for-the-badge)
-![OpenAI](https://img.shields.io/badge/OpenAI-GPT--4o--mini-412991?style=for-the-badge&logo=openai&logoColor=white)
-![ChromaDB](https://img.shields.io/badge/ChromaDB-VectorStore-yellow?style=for-the-badge)
+![Real-Time](https://img.shields.io/badge/Latency-Low-green?style=for-the-badge)
 
-**AI Insight** es una solución de Generación Aumentada por Recuperación (RAG) diseñada con una arquitectura modular de grado producción. Implementa técnicas avanzadas de IA para garantizar respuestas precisas, contextualizadas y libres de alucinaciones basadas en tus propios documentos.
+Solución integral de grado industrial para la implementación de comunicaciones M2M (Machine-to-Machine) basadas en el estándar **OPC-UA (IEC 62541)**. Este ecosistema permite la creación de Gemelos Digitales (Digital Twins) para activos críticos, garantizando interoperabilidad, seguridad robusta y monitoreo en tiempo real.
 
-## 🌟 Características Principales
+## 🌟 Características Técnicas
 
-- **Arquitectura Modular LCEL:** Orquestación flexible utilizando LangChain Expression Language.
-- **Búsqueda Híbrida (Hybrid Search):** Combina recuperación semántica (Dense) con recuperación léxica (Sparse/BM25).
-- **Multi-Query Expansion:** Genera variaciones de la consulta original para asegurar la captura de información relevante.
-- **Re-ranking Avanzado (Cross-Encoder):** Implementa un modelo de re-clasificación BERT (FlashRank) para maximizar la relevancia de los documentos finales.
-- **Interfaz Web Premium:** Dashboard interactivo desarrollado con Flask y estética de vanguardia.
+- **Servidor de Campo OPC-UA:** Arquitectura robusta con Address Space jerárquico modelado bajo estándares industriales.
+- **Protocolo de Alta Eficiencia:** Implementación de suscripciones (`DataChange`) para optimizar el ancho de banda y reducir la latencia de red.
+- **Seguridad Industrial de Extremo a Extremo:** Cifrado asimétrico X.509, políticas de seguridad `Basic256Sha256` y gestión de sesiones seguras.
+- **Supervisión Web Inteligente:** Dashboard de control integrado mediante WebSockets para visualización instantánea sin necesidad de software SCADA externo.
+- **Resiliencia Operativa:** Cliente con lógica de reconexión automática `Keep-Alive` y gestión de timeouts para entornos críticos.
 
-## 🏗️ Arquitectura del Sistema
+## 🏗️ Arquitectura de la Solución
 
-El flujo de información sigue este pipeline de ingeniería:
-1. **Ingesta:** Carga y fragmentación recursiva de PDFs, DOCX y TXT.
-2. **Retrieval:** Búsqueda combinada en base de datos vectorial y léxica.
-3. **Optimización:** Re-ordenamiento de documentos mediante re-ranker local.
-4. **Generación:** Contextualización mediante GPT-4o-mini con reglas estrictas de citación.
+1. **Capa Sensor/Accionador:** Generación de telemetría dinámica y exposición de métodos de control.
+2. **Capa de Comunicación:** Túnel TCP binario basado en el stack OPC-UA para máxima fiabilidad.
+3. **Capa de Supervisión:** Transformación de protocolos industriales a WebSockets para visualización remota en dashboards interactivos.
 
-## 🚀 Instalación y Uso
+## 🚀 Guía de Inicio Rápido
 
-### Requisitos Previos
-- Python 3.9 o superior.
-- Clave de API de OpenAI.
+### Instalación de Dependencias
+Utiliza el gestor de paquetes de Python (asegúrate de tener `py` configurado):
+```powershell
+py -m pip install asyncua flask-socketio cryptography
+```
 
-### Configuración
-1. Clona el repositorio:
-   ```bash
-   git clone https://github.com/salvvettixx/SistemaRAG.git
-   ```
-2. Instala las dependencias:
-   ```bash
-   pip install -r requirements.txt
-   ```
-3. Configura tu archivo `.env`:
-   ```env
-   OPENAI_API_KEY=tu_clave_aqui
-   ```
+### Ejecución del Ecosistema
+El proyecto incluye un simulador unificado que lanza el servidor industrial y el panel de control:
+```powershell
+py opcua_simulator.py
+```
+Acceso al Dashboard: [http://localhost:5001](http://localhost:5001)
 
-### Ejecución
-- **Fase de Ingesta:** Coloca tus archivos en `/data` y ejecuta `python -m src.ingesta`.
-- **Lanzar Web App:** Ejecuta `python app.py` y abre `http://localhost:5000`.
-
-## 📁 Estructura del Proyecto
+## 📁 Estructura del Ecosistema
 
 ```
-SistemaRAG/
-├── src/
-│   ├── motor_rag.py   # Lógica central del sistema
-│   ├── ingesta.py     # Procesamiento de documentos
-│   ├── config.py      # Gestor de configuración
-│   └── prompts.py     # Plantillas de IA
-├── data/              # Carpeta para documentos base
-├── templates/         # Interfaz web
-├── app.py             # Servidor Flask
-└── requirements.txt   # Dependencias
+Industrial-IoT-OPCUA/
+├── opcua_simulator.py    # Orquestador del Gemelo Digital + Web Bridge
+├── server_opcua.py       # Nodo de campo (Servidor OPC-UA)
+├── client_scada.py       # Estación de monitoreo (Cliente SCADA)
+├── templates/            # Interfaz de Usuario (Industrial Design)
+└── docs/                 # Documentación Técnica (GitHub Pages)
 ```
 
 ---
-Desarrollado con ❤️ para desafíos técnicos de IA Senior.
+Desarrollado para la convergencia de tecnologías IT/OT y la excelencia en la Automatización Industrial. 
