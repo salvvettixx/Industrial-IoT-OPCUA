@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Insight - Sistema RAG Avanzado</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #6366f1;
+            --primary-dark: #4f46e5;
+            --bg: #0f172a;
+            --card-bg: rgba(30, 41, 59, 0.7);
+            --text-main: #f8fafc;
+            --text-dim: #94a3b8;
+            --accent: #10b981;
+            --glass: rgba(255, 255, 255, 0.03);
+            --border: rgba(255, 255, 255, 0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Outfit', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg);
+            background-image: 
+                radial-gradient(circle at 10% 20%, rgba(99, 102, 241, 0.05) 0%, transparent 40%),
+                radial-gradient(circle at 90% 80%, rgba(16, 185, 129, 0.05) 0%, transparent 40%);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden;
+        }
+
+        /* --- Header --- */
+        header {
+            padding: 2rem;
+            text-align: center;
+            border-bottom: 1px solid var(--border);
+            backdrop-filter: blur(10px);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 800;
+            letter-spacing: -1px;
+            background: linear-gradient(to right, #6366f1, #10b981);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        /* --- Main Content --- */
+        main {
+            flex: 1;
+            max-width: 1000px;
+            margin: 0 auto;
+            width: 100%;
+            padding: 3rem 1.5rem;
+        }
+
+        .hero {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .hero h1 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            font-weight: 800;
+        }
+
+        .hero p {
+            color: var(--text-dim);
+            font-size: 1.2rem;
+        }
+
+        /* --- Chat Interface --- */
+        .chat-container {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 24px;
+            padding: 2rem;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(12px);
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .input-group {
+            position: relative;
+            display: flex;
+            gap: 1rem;
+        }
+
+        input[type="text"] {
+            flex: 1;
+            background: var(--glass);
+            border: 1px solid var(--border);
+            padding: 1.2rem 1.5rem;
+            border-radius: 16px;
+            color: white;
+            font-size: 1rem;
+            outline: none;
+            transition: all 0.3s ease;
+        }
+
+        input[type="text"]:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1);
+        }
+
+        button {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 0 2rem;
+            border-radius: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        button:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        /* --- Results Area --- */
+        .result-section {
+            margin-top: 2rem;
+            display: none;
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .answer-card {
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 20px;
+            padding: 2rem;
+            border: 1px solid var(--border);
+        }
+
+        .label {
+            text-transform: uppercase;
+            font-size: 0.7rem;
+            font-weight: 800;
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+            display: block;
+            letter-spacing: 1.5px;
+        }
+
+        .content {
+            line-height: 1.7;
+            font-weight: 300;
+            white-space: pre-wrap;
+        }
+
+        .sources {
+            margin-top: 2rem;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .source-tag {
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--accent);
+            padding: 0.4rem 1rem;
+            border-radius: 100px;
+            font-size: 0.8rem;
+            border: 1px solid rgba(16, 185, 129, 0.2);
+        }
+
+        .loader {
+            display: none;
+            width: 40px;
+            height: 40px;
+            border: 3px solid var(--glass);
+            border-radius: 50%;
+            border-top-color: var(--primary);
+            animation: spin 1s linear infinite;
+            margin: 2rem auto;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* --- Stats/Info --- */
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-top: 4rem;
+        }
+
+        .feature-card {
+            padding: 1.5rem;
+            background: var(--glass);
+            border-radius: 20px;
+            border: 1px solid var(--border);
+            text-align: center;
+        }
+
+        .feature-card h3 {
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+            color: var(--text-dim);
+        }
+
+        .feature-card p {
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
+
+    </style>
+</head>
+<body>
+    <header>
+        <div class="logo">AI INSIGHT RAG</div>
+    </header>
+
+    <main>
+        <div class="hero">
+            <h1>Sistema RAG Generativo</h1>
+            <p>Arquitectura Modular Híbrida con Re-ranking Avanzado</p>
+        </div>
+
+        <div class="chat-container">
+            <div class="input-group">
+                <input type="text" id="pregunta" placeholder="Hazme una pregunta técnica sobre tus documentos..." onkeypress="if(event.key === 'Enter') consultar()">
+                <button onclick="consultar()">
+                    <span>Consultar</span>
+                </button>
+            </div>
+
+            <div class="loader" id="loader"></div>
+
+            <div class="result-section" id="resultSection">
+                <div class="answer-card">
+                    <span class="label">Respuesta Generada</span>
+                    <div class="content" id="respuestaText"></div>
+                    
+                    <div id="sourcesContainer">
+                        <span class="label" style="margin-top: 2rem;">Fuentes Consultadas</span>
+                        <div class="sources" id="sourcesList"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="features">
+            <div class="feature-card">
+                <h3>Estrategia</h3>
+                <p>Búsqueda Híbrida</p>
+            </div>
+            <div class="feature-card">
+                <h3>Precisión</h3>
+                <p>Re-ranking BERT</p>
+            </div>
+            <div class="feature-card">
+                <h3>Modelos</h3>
+                <p>GPT-4o + OpenAI</p>
+            </div>
+            <div class="feature-card">
+                <h3>Estado</h3>
+                <p>Producción Ready</p>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        async function consultar() {
+            const input = document.getElementById('pregunta');
+            const pregunta = input.value.trim();
+            if (!pregunta) return;
+
+            // UI Reset
+            document.getElementById('resultSection').style.display = 'none';
+            document.getElementById('loader').style.display = 'block';
+            input.disabled = true;
+
+            try {
+                const response = await fetch('/api/ask', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ pregunta })
+                });
+
+                const data = await response.json();
+
+                // Mostrar resultados
+                document.getElementById('respuestaText').textContent = data.respuesta;
+                
+                const sourcesList = document.getElementById('sourcesList');
+                sourcesList.innerHTML = '';
+                
+                if (data.fuentes && data.fuentes.length > 0) {
+                    document.getElementById('sourcesContainer').style.display = 'block';
+                    data.fuentes.forEach(source => {
+                        const tag = document.createElement('span');
+                        tag.className = 'source-tag';
+                        tag.textContent = source;
+                        sourcesList.appendChild(tag);
+                    });
+                } else {
+                    document.getElementById('sourcesContainer').style.display = 'none';
+                }
+
+                document.getElementById('resultSection').style.display = 'block';
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Hubo un error al conectar con el servidor.');
+            } finally {
+                document.getElementById('loader').style.display = 'none';
+                input.disabled = false;
+                input.value = '';
+            }
+        }
+    </script>
+</body>
+</html>
