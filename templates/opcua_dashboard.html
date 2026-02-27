@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Industrial OPC-UA Dashboard | Control Center</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;500;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #0d1117;
+            --card-bg: #161b22;
+            --accent-blue: #58a6ff;
+            --accent-green: #3fb950;
+            --accent-red: #f85149;
+            --text-main: #c9d1d9;
+            --border: #30363d;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            padding: 2rem;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid var(--border);
+            padding-bottom: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .status-badge {
+            background: rgba(63, 185, 80, 0.1);
+            color: var(--accent-green);
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            border: 1px solid var(--accent-green);
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            font-weight: 800;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            padding: 1.5rem;
+            border-radius: 8px;
+            position: relative;
+        }
+
+        .card h3 {
+            font-size: 0.9rem;
+            color: #8b949e;
+            margin-bottom: 1rem;
+            text-transform: uppercase;
+        }
+
+        .value {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: #fff;
+        }
+
+        .unit {
+            font-size: 1rem;
+            color: var(--accent-blue);
+        }
+
+        .chart-container {
+            grid-column: span 2;
+            height: 300px;
+        }
+
+        .log-container {
+            background: #010409;
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            height: 200px;
+            overflow-y: auto;
+            padding: 1rem;
+            font-size: 0.8rem;
+            margin-top: 2rem;
+        }
+
+        .log-entry {
+            margin-bottom: 0.5rem;
+            border-left: 2px solid var(--accent-blue);
+            padding-left: 0.5rem;
+        }
+
+        .motor-on {
+            color: var(--accent-green);
+        }
+
+        .motor-off {
+            color: var(--accent-red);
+        }
+    </style>
+</head>
+
+<body>
+    <div class="header">
+        <div>
+            <h1>OPC-UA NODE SIMULATOR</h1>
+            <p style="font-size: 0.8rem; color: #8b949e;">Address Space: http://simulador.industrial.io | Port: 4848</p>
+        </div>
+        <div class="status-badge" id="conn-status">OPC-UA SERVER: ACTIVE</div>
+    </div>
+
+    <div class="grid">
+        <div class="card">
+            <h3>Temperatura de Proceso</h3>
+            <div class="value"><span id="temp-val">--.-</span><span class="unit">°C</span></div>
+        </div>
+
+        <div class="card">
+            <h3>Estado del Motor (DataChange)</h3>
+            <div class="value" id="motor-val">DISCONNECTED</div>
+        </div>
+
+        <div class="card chart-container">
+            <h3>Histórico de Telemetría Real-Time</h3>
+            <canvas id="telemetryChart"></canvas>
+        </div>
+    </div>
+
+    <div class="log-container" id="log-box">
+        <div class="log-entry">[SYS] Iniciando escucha de nodos OPC-UA...</div>
+    </div>
+
+    <script>
+        const socket = io();
+        const ctx = document.getElementById('telemetryChart').getContext('2d');
+
+        const chart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: [],
+                datasets: [{
+                    label: 'Temperatura (°C)',
+                    data: [],
+                    borderColor: '#58a6ff',
+                    tension: 0.4,
+                    fill: false
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: { min: 20, max: 45 },
+                    x: { display: false }
+                }
+            }
+        });
+
+        socket.on('opcua_data', function (data) {
+            // Actualizar Valores
+            document.getElementById('temp-val').textContent = data.temperature;
+            const motorStatus = data.motor_status ? 'OPERATIONAL' : 'STOPPED / HIGH TEMP';
+            const motorEl = document.getElementById('motor-val');
+            motorEl.textContent = motorStatus;
+            motorEl.className = 'value ' + (data.motor_status ? 'motor-on' : 'motor-off');
+
+            // Actualizar Gráfica
+            chart.data.labels.push(data.last_update);
+            chart.data.datasets[0].data.push(data.temperature);
+            if (chart.data.labels.length > 20) {
+                chart.data.labels.shift();
+                chart.data.datasets[0].data.shift();
+            }
+            chart.update();
+
+            // Logs
+            const logBox = document.getElementById('log-box');
+            const entry = document.createElement('div');
+            entry.className = 'log-entry';
+            entry.textContent = `[${data.last_update}] OPC-UA DATA_CHANGE: Temp=${data.temperature}°C, Motor=${motorStatus}`;
+            logBox.prepend(entry);
+        });
+    </script>
+</body>
+
+</html>
